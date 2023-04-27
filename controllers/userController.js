@@ -1,13 +1,13 @@
-const { ObjectId } = require("mongoose").Types;
 const { User, Thought } = require("../models");
 
 module.exports = {
   // create a user
   async createUser(req, res) {
     try {
-      const user = await User.create(req.body);
-      res.json(user);
+      const userDataDB = await User.create(req.body);
+      res.json(userDataDB);
     } catch (err) {
+      console.log(err);
       res.status(500).json(err);
     }
   },
@@ -15,14 +15,10 @@ module.exports = {
   // get all users
   async getUsers(req, res) {
     try {
-      const users = await User.find()
-        // getting the users thoughts
-        .populate({ path: "thought", select: "-__v" })
-        // getting the users friends
-        .populate({ path: "user", select: "-__v" });
-
-      res.josn(users);
+      const userDataDB = await User.find().select("-__v");
+      res.json(userDataDB);
     } catch (err) {
+      console.log(err);
       res.status(500).json(err);
     }
   },
@@ -30,13 +26,17 @@ module.exports = {
   // get a single user
   async getSingleUser(req, res) {
     try {
-      const user = await User.findOne({ _id: req.params.userId }).select("__v");
+      const userDataDB = await User.findOne({ _id: req.params.userId })
+        .select("__v")
+        .populate("friends")
+        .populate("thoughts");
 
-      if (!user) {
+      if (!userDataDB) {
         return res.status(404).json({ message: "No user with that ID :/" });
       }
-      res.json(user);
+      res.json(userDataDB);
     } catch (err) {
+      console.log(err);
       res.status(500).json(err);
     }
   },
@@ -44,17 +44,18 @@ module.exports = {
   // update a user
   async updateUser(req, res) {
     try {
-      const user = await User.findByIdAndUpdate(
+      const userDataDB = await User.findByIdAndUpdate(
         { _id: req.params.userId },
         { $set: req.body },
         { runValidators: true, new: true }
       );
 
-      if (!user) {
+      if (!userDataDB) {
         return res.status(404).json({ message: "No user with that ID :/" });
       }
-      res.json(user);
+      res.json(userDataDB);
     } catch (err) {
+      console.log(err);
       res.status(500).json(err);
     }
   },
@@ -73,12 +74,12 @@ module.exports = {
     }
   },
 
-  // add friend 
+  // add friend
   async addFriend(req, res) {
     try {
       const user = await User.findOneAndUpdate(
         { _id: req.params.userId },
-        { $addToSet: {friends: req.params.friendId} },
+        { $addToSet: { friends: req.params.friendId } },
         { new: true }
       );
       if (!user) {
@@ -90,12 +91,12 @@ module.exports = {
     }
   },
 
-  // delete friend 
+  // delete friend
   async deleteFriend(req, res) {
     try {
       const user = await User.findOneAndUpdate(
         { _id: req.params.userId },
-        { $pull: {friends: req.params.friendId} },
+        { $pull: { friends: req.params.friendId } },
         { new: true }
       );
       if (!user) {
@@ -105,5 +106,5 @@ module.exports = {
     } catch (err) {
       res.status(500).json(err);
     }
-  }
+  },
 };

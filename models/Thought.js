@@ -1,4 +1,5 @@
 const { Schema, model, Types } = require("mongoose");
+const formatDate = require('../utils/dateFormat');
 
 // schema only 
 const reactionSchema = new Schema(
@@ -19,6 +20,7 @@ const reactionSchema = new Schema(
     createdAt: {
       type: Date,
       default: Date.now,
+      get: timestamp => formatDate(timestamp),
     },
   },
   {
@@ -33,13 +35,14 @@ const thoughtSchema = new Schema(
   {
     thoughtText: {
       type: String,
-      required: true,
-      maxlength: 280,
+      required: 'You need to leave a thought',
       minlength: 1,
+      maxlength: 280,
     },
     createdAt: {
       type: Date,
       default: Date.now,
+      get: timestamp => formatDate(timestamp)
     },
     username: {
       type: String,
