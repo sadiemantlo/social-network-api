@@ -4,7 +4,7 @@
 
 This application is the back-end of a social networking site. It contains routes that allow users to add and delete friends, post thoughts and reactions, and delete thoughts and reactions.
 
->### To watch a demonstration video on how to use the api using Insomnia, click [here]()
+>### To watch a demonstration video on how to use the api using Insomnia, click [here](https://drive.google.com/file/d/1ePayXQWRzLWC1_ZQkNHdBw2txjtLkfWs/view)
 
 ## **Installation**
 
