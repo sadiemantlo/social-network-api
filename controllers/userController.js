@@ -29,7 +29,7 @@ module.exports = {
       const userDataDB = await User.findOne({ _id: req.params.userId })
         .select("__v")
         .populate("friends")
-        .populate("thoughts");
+        .populate("thought");
 
       if (!userDataDB) {
         return res.status(404).json({ message: "No user with that ID :/" });
